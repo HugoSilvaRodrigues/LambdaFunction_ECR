@@ -1,41 +1,34 @@
-import json
-import boto3
-import pandas as pd
 import joblib
-import sklearn  
+import pandas as pd
+import json
+import sklearn 
 
-def lambda_handler(event, context):
+def lambda_handler(data):
     
-    s3 = boto3.client("s3")
-    s3_bucket = "nome_s3"
+    try:
+        model=joblib.load("model.pkl")
+    except  Exception as e:
+        print(e)
+    try:
+        pipeline=joblib.load("pipeline.pkl")
+    except Exception as e:
+        print(e)
+    
+    try:
+        sample=pd.DataFrame({"calories":[data["x1"]],"carbohydrate":[data["x2"]],"sugar":[data["x3"]],"protein":[data["x4"]],"servings":[data["x5"]],"category":[data["x6"]]})
+    except Exception as e:
+        print(e)
+        
+    try:
+        formated_data=pipeline.transform(sample)
+    except Exception as e:
+        print(e)
 
-    # Baixa os arquivos do modelo e pipeline
-    s3.download_file(s3_bucket, "model.pkl", "/tmp/model.pkl")
-    s3.download_file(s3_bucket, "pipeline.pkl", "/tmp/pipeline.pkl")
-
-    # Carrega o modelo e o pipeline corretamente
-    model = joblib.load("/tmp/model.pkl")
-    pipeline = joblib.load("/tmp/pipeline.pkl")
-
-    # Cria DataFrame de exemplo
-    sample = pd.DataFrame([{
-        "Gender": event["x1"],
-        "Age": event["x2"],
-        "Avg_BPM": event["x3"],
-        "Session_Duration_hours": event["x4"],
-        "Workout_Type": event["x5"],
-        "Fat_Percentage": event["x6"],
-        "Water_Intake_liters": event["x7"],
-        "Workout_Frequency_daysweek": event["x8"],
-        "Experience_Level": event["x9"]
-    }])
-
-    # Transforma e prediz
-    sample_transformed = pipeline.transform(sample)
-    prediction = model.predict(sample_transformed)
-
+    try:
+        pred=model.predict(formated_data)
+    except Exception as e:
+        print(e)
+    
     return {
-        'statusCode': 200,
-        'body': json.dumps({"Prediction": prediction.tolist()})
-    }
-
+        'statusCode':200,
+        'body':json.dumps({'Prediction': pred.tolist()}) }

@@ -1,13 +1,10 @@
-FROM public.ecr.aws/lambda/python:3.11
+FROM public.ecr.aws/lambda/python:3.12
 
-# Copia os arquivos da pasta "files" para o contêiner
-COPY files/ ${LAMBDA_TASK_ROOT}/
+COPY files ${LAMBDA_TASK_ROOT}
 
-# Define o diretório de trabalho
 WORKDIR ${LAMBDA_TASK_ROOT}
 
-# Instala as dependências
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
 
-# Define o handler (arquivo app.py, função lambda_handler)
-CMD ["app.lambda_handler"]
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "app.lambda_handler" ]
