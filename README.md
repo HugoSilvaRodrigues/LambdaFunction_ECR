@@ -28,9 +28,10 @@ Minha organização de arquivos:
 Navegue até a pasta do projeto e execute o comando abaixo para criar a imagem:
 
 ```bash
-docker build -t lambda_function .
+docker build --provenance=false -t lambda_function .
 ```
-
+O parâmetro --provenance=false foi incluído para evitar a geração de uma imagem do tipo Image Index (multiplataforma), que não é compatível com o AWS Lambda.
+Ref: https://github.com/CircleCI-Public/aws-ecr-orb/issues/325
 ## 4. Fazer push da imagem para o ECR
 
 Após criar a imagem, acesse seu repositório no Amazon ECR e clique em **"Visualizar comandos de push"** para obter as instruções completas.

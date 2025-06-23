@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import sklearn 
 
-def lambda_handler(data):
+def lambda_handler(event,context):
     
     try:
         model=joblib.load("model.pkl")
@@ -15,7 +15,7 @@ def lambda_handler(data):
         print(e)
     
     try:
-        sample=pd.DataFrame({"calories":[data["x1"]],"carbohydrate":[data["x2"]],"sugar":[data["x3"]],"protein":[data["x4"]],"servings":[data["x5"]],"category":[data["x6"]]})
+        sample=pd.DataFrame({"calories":[event["x1"]],"carbohydrate":[event["x2"]],"sugar":[event["x3"]],"protein":[event["x4"]],"servings":[event["x5"]],"category":[event["x6"]]})
     except Exception as e:
         print(e)
         
